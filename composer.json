@@ -1,6 +1,5 @@
 {
     "require-dev": {
-        "symfony/var-dumper": "^6.4",
-        "symfony/console": "^6.4"
+        "symfony/var-dumper": "^6.4"
     }
 }
