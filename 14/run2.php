@@ -27,9 +27,9 @@ class Run
         $this->columnCount = count($this->matrix[0]);
 
         $i = 0;
-        $cylces = 1000000000;
-        while ($i < $cylces) {
-            $i += $this->cycleMatrix($i, $cylces);
+        $cycles = 1000000000;
+        while ($i < $cycles) {
+            $i = $this->cycleMatrix($i, $cycles);
         }
         dd($this->calcLoad());
     }
@@ -37,14 +37,15 @@ class Run
     private function cycleMatrix(int $current, int $max): int
     {
         if ($this->cycleLength && $current + $this->cycleLength < $max) {
-            return $this->cycleLength;
+            $rest = ($max - $current) % $this->cycleLength;
+            return $max - $rest;
         }
         $this->moveRocks('N');
         $this->moveRocks('W');
         $this->moveRocks('S');
         $this->moveRocks('E');
         $this->checkCycle($current);
-        return 1;
+        return ++$current;
     }
 
     private function moveRocks(string $direction): void
