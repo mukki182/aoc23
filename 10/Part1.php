@@ -1,0 +1,105 @@
+<?php
+
+require '../vendor/autoload.php';
+
+class Part1
+{
+    private array $matrix = [];
+    private array $startPosition = [];
+
+    public function run(bool $test = false): void
+    {
+        $this->readInput($test);
+
+
+        $prev = $this->startPosition;
+        $current = [$this->startPosition[0], $this->startPosition[1] - 1];
+        $steps = 0;
+        while (true) {
+            $next = $this->nextStep($prev, $current);
+            if ($next === null) {
+                echo round($steps / 2);
+                break;
+            }
+            $prev = $current;
+            $current = $next;
+            $steps++;
+        }
+    }
+
+    private function readInput(bool $test): void
+    {
+        $fileName = $test ? 'example.txt' : 'input.txt';
+        $handle = fopen($fileName, 'rb');
+        $i = 0;
+        while ($line = trim(fgets($handle))) {
+            if (($pos = strpos($line, 'S')) !== false) {
+                $this->startPosition = [$i, $pos];
+            }
+            $this->matrix[$i++] = str_split($line);
+        }
+    }
+
+    private function nextStep(array $previousPosition, array $currentPosition): ?array
+    {
+        [$previousRow, $previousColumn] = $previousPosition;
+        [$currentRow, $currentColumn] = $currentPosition;
+
+        $nextRow = $currentRow;
+        $nextColumn = $currentColumn;
+        $up = $currentRow - 1;
+        $down = $currentRow + 1;
+        $left = $currentColumn - 1;
+        $right = $currentColumn + 1;
+        switch ($this->matrix[$currentRow][$currentColumn]) {
+            case '|':
+                if ($currentRow < $previousRow) {
+                    $nextRow = $up;
+                } else {
+                    $nextRow = $down;
+                }
+                break;
+            case '-':
+                if ($currentColumn < $previousColumn) {
+                    $nextColumn = $left;
+                } else {
+                    $nextColumn = $right;
+                }
+                break;
+            case 'L':
+                if ($currentRow > $previousRow) {
+                    $nextColumn = $right;
+                } else {
+                    $nextRow = $up;
+                }
+                break;
+            case 'J':
+                if ($currentRow > $previousRow) {
+                    $nextColumn = $left;
+                } else {
+                    $nextRow = $up;
+                }
+                break;
+            case '7':
+                if ($currentRow < $previousRow) {
+                    $nextColumn = $left;
+                } else {
+                    $nextRow = $down;
+                }
+                break;
+            case 'F':
+                if ($currentRow < $previousRow) {
+                    $nextColumn = $right;
+                } else {
+                    $nextRow = $down;
+                }
+                break;
+            case 'S':
+                return null;
+        }
+
+        return [$nextRow, $nextColumn];
+    }
+}
+
+(new Part1())->run(false);
